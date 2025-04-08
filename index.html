@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Table Practice</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6a8cc8;
+            --accent-color: #ff9800;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --text-dark: #333;
+            --text-light: #f5f5f5;
+            --background-light: #f9f9f9;
+            --background-dark: #333;
+            --card-light: #fff;
+            --card-dark: #444;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-light);
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 16px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background-color: var(--card-light);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 24px;
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode .card {
+            background-color: var(--card-dark);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .button-accent {
+            background-color: var(--accent-color);
+        }
+
+        .button-accent:hover {
+            background-color: #e68a00;
+        }
+
+        .button-correct {
+            background-color: var(--correct-color);
+        }
+
+        .button-incorrect {
+            background-color: var(--incorrect-color);
+        }
+
+        .button-block {
+            display: block;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .problem {
+            font-size: 36px;
+            text-align: center;
+            margin: 24px 0;
+            font-weight: bold;
+        }
+
+        .timer {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.3s;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 20px;
+            margin: 16px 0;
+            font-weight: bold;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .stats-table th, .stats-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .stats-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .missed-questions {
+            margin-top: 24px;
+        }
+
+        .missed-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .streak-counter {
+            font-size: 18px;
+            color: var(--accent-color);
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        .answer-form {
+            display: flex;
+            justify-content: center;
+            margin: 16px 0;
+        }
+
+        .answer-input {
+            width: 120px;
+            padding: 12px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+
+        .session-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+
+            .checkbox-group {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            body, .card {
+                background-color: white;
+                color: black;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Multiplication Table Practice</h1>
+        </header>
+
+        <!-- Settings Screen -->
+        <div id="settings-screen" class="card">
+            <h2>Practice Settings</h2>
+            
+            <div class="toggle-container">
+                <span>Dark Mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-container">
+                <span>Sound Effects</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="sound-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="x-limit">Maximum First Number (X):</label>
+                <input type="number" id="x-limit" min="1" max="12" value="10">
+            </div>
+
+            <div class="form-group">
+                <label for="y-limit">Maximum Second Number (Y):</label>
+                <input type="number" id="y-limit" min="1" max="12" value="10">
+            </div>
+
+            <div class="form-group">
+                <label for="time-limit">Time Limit per Question (seconds):</label>
+                <input type="number" id="time-limit" min="1" max="60" value="10">
+            </div>
+
+            <div class="form-group">
+                <label for="difficulty">Difficulty Level:</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Focus on Specific Tables:</label>
+                <div class="checkbox-group" id="tables-selection">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="question-count">Number of Questions:</label>
+                <input type="number" id="question-count" min="5" max="50" value="10">
+            </div>
+
+            <button id="start-button" class="button button-block">Start Practice</button>
+        </div>
+
+        <!-- Practice Screen -->
+        <div id="practice-screen" class="card hidden">
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            
+            <div id="progress-text" class="text-center">Question 1 of 10</div>
+            
+            <div id="streak-counter" class="streak-counter">Streak: 0</div>
+            
+            <div id="timer" class="timer">10</div>
+            
+            <div id="problem" class="problem">7 × 8 = ?</div>
+            
+            <form id="answer-form" class="answer-form">
+                <input type="number" id="answer-input" class="answer-input" autofocus>
+                <button type="submit" class="button">Submit</button>
+            </form>
+            
+            <div id="feedback" class="feedback"></div>
+            
+            <div class="session-controls">
+                <button id="skip-button" class="button">Skip</button>
+                <button id="end-session-button" class="button button-accent">End Session</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="card hidden">
+            <h2>Practice Results</h2>
+            
+            <table class="stats-table">
+                <tr>
+                    <td>Total Questions:</td>
+                    <td id="total-questions">10</td>
+                </tr>
+                <tr>
+                    <td>Correct Answers:</td>
+                    <td id="correct-answers">8 (80%)</td>
+                </tr>
+                <tr>
+                    <td>Incorrect Answers:</td>
+                    <td id="incorrect-answers">1 (10%)</td>
+                </tr>
+                <tr>
+                    <td>Timed Out:</td>
+                    <td id="timed-out">1 (10%)</td>
+                </tr>
+                <tr>
+                    <td>Average Response Time:</td>
+                    <td id="avg-time">3.2 seconds</td>
+                </tr>
+                <tr>
+                    <td>Longest Streak:</td>
+                    <td id="max-streak">5</td>
+                </tr>
+            </table>
+            
+            <div id="problem-areas" class="card">
+                <h3>Problem Areas</h3>
+                <div id="problem-areas-content">
+                    You need more practice with the 7 and 8 tables.
+                </div>
+            </div>
+            
+            <div id="missed-questions" class="missed-questions">
+                <h3>Missed Questions</h3>
+                <div id="missed-questions-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="retry-missed-button" class="button">Retry Missed Questions</button>
+                <button id="new-session-button" class="button">New Session</button>
+                <button id="print-results-button" class="button">Print Results</button>
+                <button id="download-results-button" class="button">Download Results</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            settings: {
+                xLimit: 10,
+                yLimit: 10,
+                timeLimit: 10,
+                focusTables: [],
+                questionCount: 10,
+                difficulty: 'medium',
+                soundEnabled: true,
+                darkMode: false
+            },
+            session: {
+                questions: [],
+                currentQuestionIndex: 0,
+                startTime: null,
+                timer: null,
+                timeRemaining: 0,
+                skipped: [],
+                incorrect: [],
+                timedOut: [],
+                responseTimes: [],
+                currentStreak: 0,
+                maxStreak: 0
+            },
+            results: {
+                totalQuestions: 0,
+                correctCount: 0,
+                incorrectCount: 0,
+                timeoutCount: 0,
+                avgResponseTime: 0,
+                problemAreas: [],
+                missedQuestions: []
+            }
+        };
+
+        // Elements
+        const elements = {
+            screens: {
+                settings: document.getElementById('settings-screen'),
+                practice: document.getElementById('practice-screen'),
+                results: document.getElementById('results-screen')
+            },
+            settings: {
+                xLimit: document.getElementById('x-limit'),
+                yLimit: document.getElementById('y-limit'),
+                timeLimit: document.getElementById('time-limit'),
+                tablesSelection: document.getElementById('tables-selection'),
+                questionCount: document.getElementById('question-count'),
+                difficulty: document.getElementById('difficulty'),
+                startButton: document.getElementById('start-button'),
+                soundToggle: document.getElementById('sound-toggle'),
+                darkModeToggle: document.getElementById('dark-mode-toggle')
+            },
+            practice: {
+                progressFill: document.getElementById('progress-fill'),
+                progressText: document.getElementById('progress-text'),
+                streakCounter: document.getElementById('streak-counter'),
+                timer: document.getElementById('timer'),
+                problem: document.getElementById('problem'),
+                answerForm: document.getElementById('answer-form'),
+                answerInput: document.getElementById('answer-input'),
+                feedback: document.getElementById('feedback'),
+                skipButton: document.getElementById('skip-button'),
+                endSessionButton: document.getElementById('end-session-button')
+            },
+            results: {
+                totalQuestions: document.getElementById('total-questions'),
+                correctAnswers: document.getElementById('correct-answers'),
+                incorrectAnswers: document.getElementById('incorrect-answers'),
+                timedOut: document.getElementById('timed-out'),
+                avgTime: document.getElementById('avg-time'),
+                maxStreak: document.getElementById('max-streak'),
+                problemAreasContent: document.getElementById('problem-areas-content'),
+                missedQuestionsList: document.getElementById('missed-questions-list'),
+                retryMissedButton: document.getElementById('retry-missed-button'),
+                newSessionButton: document.getElementById('new-session-button'),
+                printResultsButton: document.getElementById('print-results-button'),
+                downloadResultsButton: document.getElementById('download-results-button')
+            }
+        };
+
+        // Initialize checkboxes for tables selection
+        function initializeTablesSelection() {
+            elements.settings.tablesSelection.innerHTML = '';
+            for (let i = 1; i <= 12; i++) {
+                const checkbox = document.createElement('div');
+                checkbox.className = 'checkbox-item';
+                checkbox.innerHTML = `
+                    <input type="checkbox" id="table-${i}" value="${i}">
+                    <label for="table-${i}">${i}s</label>
+                `;
+                elements.settings.tablesSelection.appendChild(checkbox);
+            }
+        }
+
+        // Generate random questions based on settings
+        function generateQuestions() {
+            const questions = [];
+            const { xLimit, yLimit, focusTables, questionCount } = state.settings;
+            
+            // Determine potential X values
+            let xValues = [];
+            if (focusTables.length > 0) {
+                xValues = [...focusTables];
+            } else {
+                for (let i = 1; i <= xLimit; i++) {
+                    xValues.push(i);
+                }
+            }
+            
+            // Generate unique questions
+            while (questions.length < questionCount) {
+                const x = xValues[Math.floor(Math.random() * xValues.length)];
+                const y = Math.floor(Math.random() * yLimit) + 1;
+                const answer = x * y;
+                
+                // Check if this exact question is already in the list
+                const questionExists = questions.some(q => q.x === x && q.y === y);
+                if (!questionExists) {
+                    questions.push({ x, y, answer });
+                }
+            }
+            
+            return questions;
+        }
+
+        // Start the practice session
+        function startSession() {
+            // Update settings from form values
+            state.settings.xLimit = parseInt(elements.settings.xLimit.value);
+            state.settings.yLimit = parseInt(elements.settings.yLimit.value);
+            state.settings.timeLimit = parseInt(elements.settings.timeLimit.value);
+            state.settings.questionCount = parseInt(elements.settings.questionCount.value);
+            state.settings.difficulty = elements.settings.difficulty.value;
+            state.settings.soundEnabled = elements.settings.soundToggle.checked;
+            
+            // Get selected tables
+            state.settings.focusTables = [];
+            const checkboxes = elements.settings.tablesSelection.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                state.settings.focusTables.push(parseInt(checkbox.value));
+            });
+            
+            // Adjust time limit based on difficulty
+            if (state.settings.difficulty === 'easy') {
+                state.settings.timeLimit = Math.min(state.settings.timeLimit + 5, 60);
+            } else if (state.settings.difficulty === 'hard') {
+                state.settings.timeLimit = Math.max(state.settings.timeLimit - 5, 1);
+            }
+            
+            // Generate questions
+            state.session.questions = generateQuestions();
+            state.session.currentQuestionIndex = 0;
+            state.session.startTime = new Date();
+            state.session.skipped = [];
+            state.session.incorrect = [];
+            state.session.timedOut = [];
+            state.session.responseTimes = [];
+            state.session.currentStreak = 0;
+            state.session.maxStreak = 0;
+            
+            // Switch to practice screen
+            showScreen('practice');
+            
+            // Start the first question
+            showQuestion();
+        }
+
+        // Show the current question
+        function showQuestion() {
+            if (state.session.currentQuestionIndex >= state.session.questions.length) {
+                endSession();
+                return;
+            }
+            
+            const question = state.session.questions[state.session.currentQuestionIndex];
+            elements.practice.problem.textContent = `${question.x} × ${question.y} = ?`;
+            elements.practice.answerInput.value = '';
+            elements.practice.feedback.textContent = '';
+            elements.practice.feedback.className = 'feedback';
+            
+            // Update progress
+            const progress = ((state.session.currentQuestionIndex + 1) / state.session.questions.length) * 100;
+            elements.practice.progressFill.style.width = `${progress}%`;
+            elements.practice.progressText.textContent = `Question ${state.session.currentQuestionIndex + 1} of ${state.session.questions.length}`;
+            
+            // Update streak counter
+            elements.practice.streakCounter.textContent = `Streak: ${state.session.currentStreak}`;
+            
+            // Start timer
+            state.session.timeRemaining = state.settings.timeLimit;
+            updateTimer();
+            clearInterval(state.session.timer);
+            state.session.timer = setInterval(updateTimer, 1000);
+            
+            // Focus the answer input
+            elements.practice.answerInput.focus();
+        }
+
+        // Update the timer
+        function updateTimer() {
+            elements.practice.timer.textContent = state.session.timeRemaining;
+            
+            if (state.session.timeRemaining <= 0) {
+                clearInterval(state.session.timer);
+                handleTimeout();
+            } else {
+                state.session.timeRemaining--;
+            }
+        }
+
+        // Handle answer submission
+        function submitAnswer(event) {
+            event.preventDefault();
+            clearInterval(state.session.timer);
+            
+            const userAnswer = parseInt(elements.practice.answerInput.value);
+            const currentQuestion = state.session.questions[state.session.currentQuestionIndex];
+            const responseTime = state.settings.timeLimit - state.session.timeRemaining;
+            
+            if (userAnswer === currentQuestion.answer) {
+                handleCorrectAnswer(responseTime);
+            } else {
+                handleIncorrectAnswer();
+            }
+        }
+
+        // Handle correct answers
+        function handleCorrectAnswer(responseTime) {
+            elements.practice.feedback.textContent = 'Correct!';
+            elements.practice.feedback.className = 'feedback button-correct';
+            state.session.responseTimes.push(responseTime);
+            state.session.currentStreak++;
+            state.session.maxStreak = Math.max(state.session.maxStreak, state.session.currentStreak);
+            
+            // Play sound if enabled
+            if (state.settings.soundEnabled) {
+                playSound('correct');
+            }
+            
+            // Move to next question after delay
+            setTimeout(() => {
+                state.session.currentQuestionIndex++;
+                showQuestion();
+            }, 1000);
+        }
+
+        // Handle incorrect answers
+        function handleIncorrectAnswer() {
+            const currentQuestion = state.session.questions[state.session.currentQuestionIndex];
+            elements.practice.feedback.textContent = `Incorrect! ${currentQuestion.x} × ${currentQuestion.y} = ${currentQuestion.answer}`;
+            elements.practice.feedback.className = 'feedback button-incorrect';
+            
+            state.session.incorrect.push(state.session.currentQuestionIndex);
+            state.session.currentStreak = 0;
+            
+            // Play sound if enabled
+            if (state.settings.soundEnabled) {
+                playSound('incorrect');
+            }
+            
+            // Move to next question after delay
+            setTimeout(() => {
+                state.session.currentQuestionIndex++;
+                showQuestion();
+            }, 2000);
+        }
+
+        // Handle timeout
+        function handleTimeout() {
+            const currentQuestion = state.session.questions[state.session.currentQuestionIndex];
+            elements.practice.feedback.textContent = `Time's up! ${currentQuestion.x} × ${currentQuestion.y} = ${currentQuestion.answer}`;
+            elements.practice.feedback.className = 'feedback button-incorrect';
+            
+            state.session.timedOut.push(state.session.currentQuestionIndex);
+            state.session.currentStreak = 0;
+            
+            // Play sound if enabled
+            if (state.settings.soundEnabled) {
+                playSound('timeout');
+            }
+            
+            // Move to next question after delay
+            setTimeout(() => {
+                state.session.currentQuestionIndex++;
+                showQuestion();
+            }, 2000);
+        }
+
+        // Skip the current question
+        function skipQuestion() {
+            clearInterval(state.session.timer);
+            
+            state.session.skipped.push(state.session.currentQuestionIndex);
+            state.session.currentStreak = 0;
+            
+            // Move to next question immediately
+            state.session.currentQuestionIndex++;
+            showQuestion();
+        }
+
+        // End the session and show results
+        function endSession() {
+            clearInterval(state.session.timer);
+            
+            // Calculate results
+            const totalQuestions = state.session.questions.length;
+            const correctCount = totalQuestions - state.session.incorrect.length - state.session.timedOut.length - state.session.skipped.length;
+            const incorrectCount = state.session.incorrect.length;
+            const timeoutCount = state.session.timedOut.length;
+            const skippedCount = state.session.skipped.length;
+            
+            // Calculate average response time
+            let avgResponseTime = 0;
+            if (state.session.responseTimes.length > 0) {
+                avgResponseTime = state.session.responseTimes.reduce((a, b) => a + b, 0) / state.session.responseTimes.length;
+            }
+            
+            // Update state with results
+            state.results = {
+                totalQuestions,
+                correctCount,
+                incorrectCount,
+                timeoutCount,
+                skippedCount,
+                avgResponseTime,
+                maxStreak: state.session.maxStreak,
+                missedQuestions: []
+            };
+            
+            // Collect missed questions
+            const missedIndices = [...state.session.incorrect, ...state.session.timedOut];
+            state.results.missedQuestions = missedIndices.map(index => state.session.questions[index]);
+            
+            // Identify problem areas
+            state.results.problemAreas = identifyProblemAreas();
+            
+            // Update results screen
+            updateResultsScreen();
+            
+            // Show results screen
+            showScreen('results');
+        }
+
+        // Identify multiplication tables that need more practice
+        function identifyProblemAreas() {
+            const tableCounts = {};
+            const tableErrors = {};
+            
+            // Count occurrences of each table number
+            state.session.questions.forEach((question, index) => {
+                if (!tableCounts[question.x]) {
+                    tableCounts[question.x] = 0;
+                    tableErrors[question.x] = 0;
+                }
+                
+                tableCounts[question.x]++;
+                
+                // Count errors for each table
+                if (state.session.incorrect.includes(index) || state.session.timedOut.includes(index)) {
+                    tableErrors[question.x]++;
+                }
+            });
+            
+            // Calculate error rates
+            const problemAreas = [];
+            for (const table in tableCounts) {
+                const errorRate = tableErrors[table] / tableCounts[table];
+                if (errorRate > 0.3) { // 30% error rate threshold
+                    problemAreas.push({
+                        table: parseInt(table),
+                        errorRate: errorRate
+                    });
+                }
+            }
+            
+            return problemAreas.sort((a, b) => b.errorRate - a.errorRate);
+        }
+
+        // Update the results screen with session data
+        function updateResultsScreen() {
+            const { totalQuestions, correctCount, incorrectCount, timeoutCount, skippedCount, avgResponseTime, maxStreak, problemAreas, missedQuestions } = state.results;
+            
+            // Update statistics
+            elements.results.totalQuestions.textContent = totalQuestions;
+            elements.results.correctAnswers.textContent = `${correctCount} (${Math.round(correctCount / totalQuestions * 100)}%)`;
+            elements.results.incorrectAnswers.textContent = `${incorrectCount} (${Math.round(incorrectCount / totalQuestions * 100)}%)`;
+            elements.results.timedOut.textContent = `${timeoutCount} (${Math.round(timeoutCount / totalQuestions * 100)}%)`;
+            elements.results.avgTime.textContent = `${avgResponseTime.toFixed(1)} seconds`;
+            elements.results.maxStreak.textContent = maxStreak;
+            
+            // Update problem areas
+            if (problemAreas.length > 0) {
+                let problemAreasText = 'You need more practice with these tables: ';
+                problemAreasText += problemAreas.map(area => `${area.table}s (${Math.round(area.errorRate * 100)}% error rate)`).join(', ');
+                elements.results.problemAreasContent.textContent = problemAreasText;
+            } else {
+                elements.results.problemAreasContent.textContent = 'Great job! No specific problem areas identified.';
+            }
+            
+            // Update missed questions list
+            elements.results.missedQuestionsList.innerHTML = '';
+            if (missedQuestions.length > 0) {
+                missedQuestions.forEach(question => {
+                    const missedItem = document.createElement('div');
+                    missedItem.className = 'missed-item';
+                    missedItem.textContent = `${question.x} × ${question.y} = ${question.answer}`;
+                    elements.results.missedQuestionsList.appendChild(missedItem);
+                });
+            } else {
+                const perfectScore = document.createElement('div');
+                perfectScore.textContent = 'Perfect score! No missed questions.';
+                elements.results.missedQuestionsList.appendChild(perfectScore);
+            }
+            
+            // Disable "Retry Missed" button if no missed questions
+            elements.results.retryMissedButton.disabled = missedQuestions.length === 0;
+        }
+
+        // Start a new session with only the missed questions
+        function retryMissedQuestions() {
+            // Create new session with missed questions
+            state.session.questions = [...state.results.missedQuestions];
+            state.session.currentQuestionIndex = 0;
+            state.session.startTime = new Date();
+            state.session.skipped = [];
+            state.session.incorrect = [];
+            state.session.timedOut = [];
+            state.session.responseTimes = [];
+            state.session.currentStreak = 0;
+            state.session.maxStreak = 0;
+            
+            // Switch to practice screen
+            showScreen('practice');
+            
+            // Start the first question
+            showQuestion();
+        }
+
+        // Switch between screens
+        function showScreen(screenName) {
+            elements.screens.settings.classList.add('hidden');
+            elements.screens.practice.classList.add('hidden');
+            elements.screens.results.classList.add('hidden');
+            
+            elements.screens[screenName].classList.remove('hidden');
+        }
+
+        // Play sound effects
+        function playSound(type) {
+            // Simple beep sounds instead of loading external audio files
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = context.createOscillator();
+            const gainNode = context.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(context.destination);
+            
+            // Different sounds for different feedback types
+            switch (type) {
+                case 'correct':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 800;
+                    gainNode.gain.value = 0.1;
+                    oscillator.start();
+                    setTimeout(() => {
+                        oscillator.stop();
+                    }, 200);
+                    break;
+                case 'incorrect':
+                    oscillator.type = 'square';
+                    oscillator.frequency.value = 300;
+                    gainNode.gain.value = 0.1;
+                    oscillator.start();
+                    setTimeout(() => {
+                        oscillator.stop();
+                    }, 300);
+                    break;
+                case 'timeout':
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.value = 400;
+                    gainNode.gain.value = 0.1;
+                    oscillator.start();
+                    setTimeout(() => {
+                        oscillator.stop();
+                    }, 500);
+                    break;
+            }
+        }
+
+        // Generate and download results as a CSV file
+        function downloadResults() {
+            const { totalQuestions, correctCount, incorrectCount, timeoutCount, skippedCount, avgResponseTime, maxStreak, problemAreas, missedQuestions } = state.results;
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Add header
+            csvContent += "Multiplication Practice Results - " + new Date().toLocaleDateString() + "\r\n\r\n";
+            
+            // Add statistics
+            csvContent += "Total Questions,Correct,Incorrect,Timed Out,Skipped,Avg. Response Time,Longest Streak\r\n";
+            csvContent += `${totalQuestions},${correctCount},${incorrectCount},${timeoutCount},${skippedCount},${avgResponseTime.toFixed(1)},${maxStreak}\r\n\r\n`;
+            
+            // Add problem areas
+            csvContent += "Problem Areas\r\n";
+            if (problemAreas.length > 0) {
+                problemAreas.forEach(area => {
+                    csvContent += `Table ${area.table},${Math.round(area.errorRate * 100)}% error rate\r\n`;
+                });
+            } else {
+                csvContent += "No specific problem areas identified.\r\n";
+            }
+            csvContent += "\r\n";
+            
+            // Add missed questions
+            csvContent += "Missed Questions\r\n";
+            csvContent += "First Number,Second Number,Correct Answer\r\n";
+            if (missedQuestions.length > 0) {
+                missedQuestions.forEach(question => {
+                    csvContent += `${question.x},${question.y},${question.answer}\r\n`;
+                });
+            } else {
+                csvContent += "Perfect score! No missed questions.\r\n";
+            }
+            
+            // Create download link
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "multiplication_results_" + new Date().toLocaleDateString().replace(/\//g, "-") + ".csv");
+            document.body.appendChild(link);
+            
+            // Trigger download
+            link.click();
+            
+            // Clean up
+            document.body.removeChild(link);
+        }
+
+        // Print results
+        function printResults() {
+            window.print();
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            state.settings.darkMode = document.body.classList.contains('dark-mode');
+        }
+
+        // Event listeners
+        function initializeEventListeners() {
+            // Settings screen
+            elements.settings.startButton.addEventListener('click', startSession);
+            elements.settings.difficulty.addEventListener('change', function() {
+                const difficulty = this.value;
+                let timeLimit = parseInt(elements.settings.timeLimit.value);
+                
+                if (difficulty === 'easy') {
+                    timeLimit = 15;
+                } else if (difficulty === 'medium') {
+                    timeLimit = 10;
+                } else if (difficulty === 'hard') {
+                    timeLimit = 5;
+                }
+                
+                elements.settings.timeLimit.value = timeLimit;
+            });
+            elements.settings.darkModeToggle.addEventListener('change', toggleDarkMode);
+            
+            // Practice screen
+            elements.practice.answerForm.addEventListener('submit', submitAnswer);
+            elements.practice.skipButton.addEventListener('click', skipQuestion);
+            elements.practice.endSessionButton.addEventListener('click', endSession);
+            
+            // Results screen
+            elements.results.retryMissedButton.addEventListener('click', retryMissedQuestions);
+            elements.results.newSessionButton.addEventListener('click', function() {
+                showScreen('settings');
+            });
+            elements.results.printResultsButton.addEventListener('click', printResults);
+            elements.results.downloadResultsButton.addEventListener('click', downloadResults);
+        }
+
+        // Initialize the app
+        function initializeApp() {
+            initializeTablesSelection();
+            initializeEventListeners();
+            
+            // Check for saved dark mode preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                elements.settings.darkModeToggle.checked = true;
+                toggleDarkMode();
+            }
+        }
+
+        // Start the app when the page loads
+        window.addEventListener('load', initializeApp);
+    </script>
+</body>
+</html>
